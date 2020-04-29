@@ -20,9 +20,11 @@
 ##' }
 ##' @author Thomas J. Leeper
 archivePackages <- function(repopath = getOption("dratRepo", "~/git/drat"),
-                            type = "source", 
-                            pkg) {
+                            type = c("source", "mac.binary", "mac.binary.el-capitan", "win.binary"), 
+                            pkg = NULL) {
    
+    for (type in type) {
+        
     ## TODO need to deal with binary repos...
     repodir <- contrib.url(repopath, type)
 
@@ -42,8 +44,9 @@ archivePackages <- function(repopath = getOption("dratRepo", "~/git/drat"),
         }
     }
     
-    if (missing(pkg)) {
+    if (is.null(pkg)) {
         old <- pruneRepo(repopath = repopath, type = type, remove = FALSE)
+        if (is.null(old)) next
         old <- old[!old[,"newest"], ]
         sapply(unique(old$package), mkArchive)
     } else {
@@ -53,6 +56,8 @@ archivePackages <- function(repopath = getOption("dratRepo", "~/git/drat"),
         sapply(pkg, mkArchive)
     }
     file.rename(file.path(repodir, old$file), file.path(repodir, "Archive", old$package, old$file))
+    
+    }
     
     invisible(NULL)
 }
