@@ -35,6 +35,7 @@
 ##'   addRepo("LocalRepo", "file:/nas/R/repo")   # adds local file-based repo,
 ##'                                              # assumes you can read /nas/R/repo
 ##' }
+##' @export
 ##' @author Dirk Eddelbuettel
 addRepo <- function(account, alturl) {
     r <- getOption("repos")

@@ -35,6 +35,7 @@ A data frame describing the repository is returned
  \dQuote{package} (just the name), \dQuote{version} and a
  logical variable \dQuote{newest} indicating if the package can
  be removed.
+ @export
 }
 \description{
 The function determines which packages in a repositories can be

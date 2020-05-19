@@ -14,6 +14,7 @@
 ##' @param pkg Optional character variable specifying a package name(s), whose
 ##' older versions should be archived. If missing (the default), archiving is 
 ##' performed on all packages.
+##' @export
 ##' @examples
 ##' \dontrun{
 ##'   archivePackages()   # archive all older package versions

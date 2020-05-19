@@ -53,6 +53,7 @@
 ##'   insertPackage("foo_0.2.3.tar.gz", action = "prune")   # prunes any older copies
 ##'   insertPackage("foo_0.2.3.tar.gz", action = "archive")   # archives any older copies
 ##' }
+##' @export
 ##' @author Dirk Eddelbuettel
 insertPackage <- function(file,
                           repodir = getOption("dratRepo", "~/git/drat"),

@@ -30,6 +30,7 @@
 ##'  \dQuote{package} (just the name), \dQuote{version} and a
 ##'  logical variable \dQuote{newest} indicating if the package can
 ##'  be removed.
+##'  @export
 ##' @author Dirk Eddelbuettel & Patrick Schratz
 pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
                       type = c("source", "mac.binary","mac.binary.el-capitan", "win.binary"), 

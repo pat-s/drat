@@ -16,6 +16,7 @@
 ##' \dQuote{"~/git"}.
 ##' @return The function is invoked for its side-effects and only
 ##' returns \code{NULL} invisibly.
+##' @export
 ##' @author Dirk Eddelbuettel
 initRepo <- function(name="drat", basepath="~/git") {
 
