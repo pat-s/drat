@@ -11,11 +11,12 @@
 ##' change in subsequent versions.
 ##'
 ##' @title Prune repository from older copies of packages
+##' @importFrom utils contrib.url
 ##' @param repopath Character variable with the path to the repo;
 ##'  defaults to the value of the \dQuote{dratRepo} option with
 ##'  \dQuote{"~/git/drat"} as fallback
-##' @param type Character variable for the type of repository, so far
-##'  \dQuote{source}
+##' @param type Character variable for the type of repository. Valid names are
+##'   `"source"`, `"mac.binary"`, `"mac.binary.el-captian"` and `"win.binary"`.
 ##' @param pkg Optional character variable specifying a package name,
 ##'  whose older versions should be pruned. If missing (the
 ##'  default), pruning is performed on all packages.
@@ -29,7 +30,7 @@
 ##'  \dQuote{package} (just the name), \dQuote{version} and a
 ##'  logical variable \dQuote{newest} indicating if the package can
 ##'  be removed.
-##' @author Dirk Eddelbuettel
+##' @author Dirk Eddelbuettel & Patrick Schratz
 pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
                       type = c("source", "mac.binary","mac.binary.el-capitan", "win.binary"), 
                       pkg = NULL,
@@ -49,10 +50,10 @@ pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
     } else if (x == "win.binary") {
         "\\.zip$"
     } else {
-        stop("Unknown package type. Valid values are 'source', 'mac.binary' and 'win.binary'.", call. = FALSE)
+        stop("Unknown package type. Valid values are 'source', 'mac.binary', 'mac.binary.el-captian' and 'win.binary'.", call. = FALSE)
     }
     
-    repodir <- contrib.url(repopath, type)
+    repodir <- utils::contrib.url(repopath, type)
     
     files <- list.files(repodir, pattern = ext, full.names = FALSE)
     

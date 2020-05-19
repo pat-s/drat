@@ -4,16 +4,20 @@
 \alias{pruneRepo}
 \title{Prune repository from older copies of packages}
 \usage{
-pruneRepo(repopath = getOption("dratRepo", "~/git/drat"),
-  type = "source", pkg, remove = FALSE)
+pruneRepo(
+  repopath = getOption("dratRepo", "~/git/drat"),
+  type = c("source", "mac.binary", "mac.binary.el-capitan", "win.binary"),
+  pkg = NULL,
+  remove = FALSE
+)
 }
 \arguments{
 \item{repopath}{Character variable with the path to the repo;
 defaults to the value of the \dQuote{dratRepo} option with
 \dQuote{"~/git/drat"} as fallback}
 
-\item{type}{Character variable for the type of repository, so far
-\dQuote{source}}
+\item{type}{Character variable for the type of repository. Valid names are
+`"source"`, `"mac.binary"`, `"mac.binary.el-captian"` and `"win.binary"`.}
 
 \item{pkg}{Optional character variable specifying a package name,
 whose older versions should be pruned. If missing (the
@@ -46,5 +50,5 @@ This function is still undergoing development and polish and may
 change in subsequent versions.
 }
 \author{
-Dirk Eddelbuettel
+Dirk Eddelbuettel & Patrick Schratz
 }
