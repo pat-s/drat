@@ -6,7 +6,8 @@
 \usage{
 pruneRepo(
   repopath = getOption("dratRepo", "~/git/drat"),
-  type = c("source", "mac.binary", "mac.binary.el-capitan", "win.binary"),
+  type = c("source", "mac.binary", "mac.binary.el-capitan", "mac.binary.mavericks",
+    "win.binary"),
   pkg = NULL,
   remove = FALSE
 )
@@ -17,7 +18,8 @@ defaults to the value of the \dQuote{dratRepo} option with
 \dQuote{"~/git/drat"} as fallback}
 
 \item{type}{Character variable for the type of repository. Valid names are
-`"source"`, `"mac.binary"`, `"mac.binary.el-captian"` and `"win.binary"`.}
+`"source"`, `"mac.binary"`, `"mac.binary.el-capitan"`,
+`"mac.binary.mavericks"`, and `"win.binary"`.}
 
 \item{pkg}{Optional character variable specifying a package name,
 whose older versions should be pruned. If missing (the

@@ -1,7 +1,7 @@
 
-##' The function moves older versions of packages into a CRAN-style 
+##' The function moves older versions of packages into a CRAN-style
 ##' archive folder.
-##' 
+##'
 ##' This function is still undergoing development and polish and may
 ##' change in subsequent versions.
 ##'
@@ -10,9 +10,10 @@
 ##' defaults to the value of the \dQuote{dratRepo} option with
 ##' \dQuote{"~/git/drat"} as fallback
 ##' @param type Character variable for the type of repository. Valid names are
-##'   `"source"`, `"mac.binary"`, `"mac.binary.el-captian"` and `"win.binary"`.
+##'   `"source"`, `"mac.binary"`, `"mac.binary.el-capitan"`,
+##'   `"mac.binary.mavericks"`, and `"win.binary"`.
 ##' @param pkg Optional character variable specifying a package name(s), whose
-##' older versions should be archived. If missing (the default), archiving is 
+##' older versions should be archived. If missing (the default), archiving is
 ##' performed on all packages.
 ##' @export
 ##' @examples
@@ -22,43 +23,45 @@
 ##' }
 ##' @author Thomas J. Leeper & Patrick Schratz
 archivePackages <- function(repopath = getOption("dratRepo", "~/git/drat"),
-                            type = c("source", "mac.binary", "mac.binary.el-capitan", "win.binary"), 
+                            type = c(
+                              "source", "mac.binary", "mac.binary.el-capitan",
+                              "mac.binary.mavericks", "win.binary"
+                            ),
                             pkg = NULL) {
-   
-    for (type in type) {
-        
+
+  for (type in type) {
+
     repodir <- contrib.url(repopath, type)
 
     archive <- file.path(repodir, "Archive")
     if (!file.exists(archive)) {
-        if (!dir.create(archive, recursive = TRUE)) {
-            stop("Archive directory not found and couldn't be created\n", call. = FALSE)
-        }
+      if (!dir.create(archive, recursive = TRUE)) {
+        stop("Archive directory not found and couldn't be created\n", call. = FALSE)
+      }
     }
-    
+
     mkArchive <- function(x) {
-        parchive <- file.path(repodir, "Archive", x)
-        if (!file.exists(parchive)) {
-            if (!dir.create(parchive, recursive = TRUE)) {
-                stop("Package archive directory for ", x," not found and couldn't be created\n", call. = FALSE)
-            }
+      parchive <- file.path(repodir, "Archive", x)
+      if (!file.exists(parchive)) {
+        if (!dir.create(parchive, recursive = TRUE)) {
+          stop("Package archive directory for ", x, " not found and couldn't be created\n", call. = FALSE)
         }
+      }
     }
-    
+
     if (is.null(pkg)) {
-        old <- pruneRepo(repopath = repopath, type = type, remove = FALSE)
-        if (is.null(old)) next
-        old <- old[!old[,"newest"], ]
-        sapply(unique(old$package), mkArchive)
+      old <- pruneRepo(repopath = repopath, type = type, remove = FALSE)
+      if (is.null(old)) next
+      old <- old[!old[, "newest"], ]
+      sapply(unique(old$package), mkArchive)
     } else {
-        pkg <- unique(pkg)
-        old <- pruneRepo(repopath = repopath, type = type, pkg = pkg, remove = FALSE)
-        old <- old[!old[,"newest"] & old[,"package"] %in% pkg, ]
-        sapply(pkg, mkArchive)
+      pkg <- unique(pkg)
+      old <- pruneRepo(repopath = repopath, type = type, pkg = pkg, remove = FALSE)
+      old <- old[!old[, "newest"] & old[, "package"] %in% pkg, ]
+      sapply(pkg, mkArchive)
     }
     file.rename(file.path(repodir, old$file), file.path(repodir, "Archive", old$package, old$file))
-    
-    }
-    return(invisible(NULL))
-}
 
+  }
+  return(invisible(NULL))
+}

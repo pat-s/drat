@@ -16,7 +16,8 @@
 ##'  defaults to the value of the \dQuote{dratRepo} option with
 ##'  \dQuote{"~/git/drat"} as fallback
 ##' @param type Character variable for the type of repository. Valid names are
-##'   `"source"`, `"mac.binary"`, `"mac.binary.el-captian"` and `"win.binary"`.
+##'   `"source"`, `"mac.binary"`, `"mac.binary.el-capitan"`,
+##'   `"mac.binary.mavericks"`, and `"win.binary"`.
 ##' @param pkg Optional character variable specifying a package name,
 ##'  whose older versions should be pruned. If missing (the
 ##'  default), pruning is performed on all packages.
@@ -33,39 +34,42 @@
 ##'  @export
 ##' @author Dirk Eddelbuettel & Patrick Schratz
 pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
-                      type = c("source", "mac.binary","mac.binary.el-capitan", "win.binary"), 
+                      type = c(
+                        "source", "mac.binary", "mac.binary.el-capitan",
+                        "mac.binary.mavericks", "win.binary"
+                      ),
                       pkg = NULL,
                       remove = FALSE) {
 
-    ##ext <- "_.*\\.tar\\..*$"            # with a nod to src/library/tools/packages.R
-    # ext <- "\\.tar\\..*$"            
-    
-    out = lapply(type, function(x) {
-    
+  ## ext <- "_.*\\.tar\\..*$"            # with a nod to src/library/tools/packages.R
+  # ext <- "\\.tar\\..*$"
+
+  out <- lapply(type, function(x) {
+
     ext <- if (x == "source") {
-        "\\.tar\\..*$"
+      "\\.tar\\..*$"
     } else if (x == "mac.binary") {
-        "\\.tgz$"
+      "\\.tgz$"
     } else if (x == "mac.binary.el-capitan") {
-        "\\.tgz$"
+      "\\.tgz$"
     } else if (x == "win.binary") {
-        "\\.zip$"
+      "\\.zip$"
     } else {
-        stop("Unknown package type. Valid values are 'source', 'mac.binary', 'mac.binary.el-captian' and 'win.binary'.", call. = FALSE)
+      stop("Unknown package type. Valid values are 'source', 'mac.binary', 'mac.binary.el-capitan' and 'win.binary'.", call. = FALSE)
     }
-    
+
     repodir <- utils::contrib.url(repopath, type)
-    
+
     files <- list.files(repodir, pattern = ext, full.names = FALSE)
-    
+
     if (length(files) == 0) {
-        return(NULL)
+      return(NULL)
     }
 
     ## subst. out the extension
     noextfiles <- gsub(ext, "", files)
     noextfiles <- do.call(rbind, strsplit(noextfiles, "_", fixed = TRUE))
-    
+
     ## package names to the left
     # pkgs <- sapply(strsplit(files, "_", fixed=TRUE), "[", 1L)
     pkgs <- noextfiles[, 1]
@@ -73,20 +77,20 @@ pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
     ## versions is then the remainder to the right -- FIXME for something better
     # verstxt <- gsub("[a-zA-Z0-9\\.]*_", "", noextfiles)
     verstxt <- noextfiles[, 2]
-    
-    
+
+
     ## parse into proper version objects -- thanks, base R!
     vers <- package_version(verstxt)
 
     df <- data.frame(file = files, package = pkgs, version = vers, stringsAsFactors = FALSE)
-    
 
-    df <- df[order(df$package, df$version, decreasing = TRUE),]
+
+    df <- df[order(df$package, df$version, decreasing = TRUE), ]
     df$newest <- !duplicated(df$package)
 
-    df <- df[order(df$package, df$version, decreasing = FALSE),]
+    df <- df[order(df$package, df$version, decreasing = FALSE), ]
     if (!is.null(pkg)) {
-        df <- df[df$package %in% pkg,]
+      df <- df[df$package %in% pkg, ]
     }
 
     ## R> df
@@ -103,29 +107,30 @@ pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
     ## R>
 
     haspkg <- requireNamespace("git2r", quietly = TRUE)
-    
+
     if (remove != FALSE) {
-        rmfiles <- df[!df[,"newest"], "file"]
-        if (remove == "git") {
-            if (!haspkg)
-                stop("The 'pruneRepo' function requires the 'git2r' packages.", call. = FALSE)
-            repo <- git2r::repository(repopath)
-            for (f in rmfiles) {
-                fullfile <- file.path(repodir, f)
-                git2r::rm_file(repo, fullfile)
-            }
-        } else {
-            for (f in rmfiles) {
-                fullfile <- file.path(repodir, f)
-                unlink(fullfile)
-            }
+      rmfiles <- df[!df[, "newest"], "file"]
+      if (remove == "git") {
+        if (!haspkg) {
+          stop("The 'pruneRepo' function requires the 'git2r' packages.", call. = FALSE)
         }
+        repo <- git2r::repository(repopath)
+        for (f in rmfiles) {
+          fullfile <- file.path(repodir, f)
+          git2r::rm_file(repo, fullfile)
+        }
+      } else {
+        for (f in rmfiles) {
+          fullfile <- file.path(repodir, f)
+          unlink(fullfile)
+        }
+      }
     }
-    
+
     return(df)
-    
-    })
-    df = do.call("rbind", out)
-    
-    return(invisible(df))
+
+  })
+  df <- do.call("rbind", out)
+
+  return(invisible(df))
 }
