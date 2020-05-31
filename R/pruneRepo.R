@@ -52,10 +52,12 @@ pruneRepo <- function(repopath = getOption("dratRepo", "~/git/drat"),
       "\\.tgz$"
     } else if (x == "mac.binary.el-capitan") {
       "\\.tgz$"
+    } else if (x == "mac.binary.mavericks") {
+        "\\.tgz$"
     } else if (x == "win.binary") {
       "\\.zip$"
     } else {
-      stop("Unknown package type. Valid values are 'source', 'mac.binary', 'mac.binary.el-capitan' and 'win.binary'.", call. = FALSE)
+      stop("Unknown package type. Valid values are 'source', 'mac.binary', 'mac.binary.el-capitan', 'mac.binary.mavericks' and 'win.binary'.", call. = FALSE)
     }
 
     repodir <- utils::contrib.url(repopath, type)
